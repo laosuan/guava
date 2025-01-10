@@ -25,12 +25,14 @@ import com.google.common.testing.GcFinalization;
 import com.google.common.testing.NullPointerTester;
 import java.lang.ref.WeakReference;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Unit test for {@link Interners}.
  *
  * @author Kevin Bourrillion
  */
+@NullUnmarked
 public class InternersTest extends TestCase {
 
   public void testStrong_simplistic() {
@@ -108,12 +110,12 @@ public class InternersTest extends TestCase {
     new NullPointerTester().testAllPublicStaticMethods(Interners.class);
   }
 
-  public void testConcurrencyLevel_Zero() {
+  public void testConcurrencyLevel_zero() {
     Interners.InternerBuilder builder = Interners.newBuilder();
     assertThrows(IllegalArgumentException.class, () -> builder.concurrencyLevel(0));
   }
 
-  public void testConcurrencyLevel_Negative() {
+  public void testConcurrencyLevel_negative() {
     Interners.InternerBuilder builder = Interners.newBuilder();
     assertThrows(IllegalArgumentException.class, () -> builder.concurrencyLevel(-42));
   }

@@ -25,13 +25,14 @@ import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.J2ktIncompatible;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
+import com.google.errorprone.annotations.concurrent.LazyInit;
 import com.google.j2objc.annotations.RetainedWith;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.logging.Level;
-import javax.annotation.CheckForNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Executor ensuring that all Runnables submitted are executed in order, using the provided
@@ -49,7 +50,6 @@ import javax.annotation.CheckForNull;
  */
 @J2ktIncompatible
 @GwtIncompatible
-@ElementTypesAreNonnullByDefault
 final class SequentialExecutor implements Executor {
   private static final LazyLogger log = new LazyLogger(SequentialExecutor.class);
 
@@ -70,6 +70,7 @@ final class SequentialExecutor implements Executor {
   private final Deque<Runnable> queue = new ArrayDeque<>();
 
   /** see {@link WorkerRunningState} */
+  @LazyInit
   @GuardedBy("queue")
   private WorkerRunningState workerRunningState = IDLE;
 
@@ -174,7 +175,7 @@ final class SequentialExecutor implements Executor {
 
   /** Worker that runs tasks from {@link #queue} until it is empty. */
   private final class QueueWorker implements Runnable {
-    @CheckForNull Runnable task;
+    @Nullable Runnable task;
 
     @Override
     public void run() {

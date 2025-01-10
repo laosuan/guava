@@ -29,12 +29,14 @@ import java.util.Map.Entry;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Unit test of {@link MutableClassToInstanceMap}.
  *
  * @author Kevin Bourrillion
  */
+@NullUnmarked
 public class MutableClassToInstanceMapTest extends TestCase {
   public static Test suite() {
     TestSuite suite = new TestSuite();
@@ -46,7 +48,7 @@ public class MutableClassToInstanceMapTest extends TestCase {
                   // Other tests will verify what real, warning-free usage looks like
                   // but here we have to do some serious fudging
                   @Override
-                  @SuppressWarnings("unchecked")
+                  @SuppressWarnings({"unchecked", "rawtypes"})
                   public Map<Class, Impl> create(Object... elements) {
                     MutableClassToInstanceMap<Impl> map = MutableClassToInstanceMap.create();
                     for (Object object : elements) {

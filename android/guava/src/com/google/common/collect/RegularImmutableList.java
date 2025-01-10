@@ -17,13 +17,14 @@
 package com.google.common.collect;
 
 import static com.google.common.base.Preconditions.checkElementIndex;
+import static java.lang.System.arraycopy;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.J2ktIncompatible;
 import com.google.common.annotations.VisibleForTesting;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of {@link ImmutableList} backed by a simple array.
@@ -32,7 +33,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @GwtCompatible(serializable = true, emulated = true)
 @SuppressWarnings("serial") // uses writeReplace(), not default serialization
-@ElementTypesAreNonnullByDefault
 class RegularImmutableList<E> extends ImmutableList<E> {
   static final ImmutableList<Object> EMPTY = new RegularImmutableList<>(new Object[0], 0);
 
@@ -73,7 +73,7 @@ class RegularImmutableList<E> extends ImmutableList<E> {
 
   @Override
   int copyIntoArray(@Nullable Object[] dst, int dstOff) {
-    System.arraycopy(array, 0, dst, dstOff, size);
+    arraycopy(array, 0, dst, dstOff, size);
     return dstOff + size;
   }
 

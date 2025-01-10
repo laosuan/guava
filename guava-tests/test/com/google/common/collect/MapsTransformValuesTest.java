@@ -16,10 +16,13 @@
 
 package com.google.common.collect;
 
+import static com.google.common.collect.Maps.transformValues;
+
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import java.util.Map;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Tests for {@link Maps#transformValues(Map, Function)}.
@@ -27,10 +30,11 @@ import java.util.Map;
  * @author Isaac Shum
  */
 @GwtCompatible
+@NullMarked
 public class MapsTransformValuesTest extends AbstractMapsTransformValuesTest {
   @Override
   protected Map<String, String> makeEmptyMap() {
-    return Maps.transformValues(Maps.<String, String>newHashMap(), Functions.<String>identity());
+    return transformValues(Maps.<String, String>newHashMap(), Functions.<String>identity());
   }
 
   @Override
@@ -39,6 +43,6 @@ public class MapsTransformValuesTest extends AbstractMapsTransformValuesTest {
     underlying.put("a", 1);
     underlying.put("b", 2);
     underlying.put("c", 3);
-    return Maps.transformValues(underlying, Functions.toStringFunction());
+    return transformValues(underlying, Functions.toStringFunction());
   }
 }

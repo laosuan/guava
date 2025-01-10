@@ -17,6 +17,7 @@
 package com.google.common.util.concurrent;
 
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertThrows;
 
 import java.util.concurrent.Callable;
@@ -24,14 +25,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Test case for {@link ListenableFutureTask}.
  *
  * @author Sven Mawson
  */
+@NullUnmarked
 public class ListenableFutureTaskTest extends TestCase {
 
   private ExecutorService exec;
@@ -101,7 +103,7 @@ public class ListenableFutureTaskTest extends TestCase {
     // listener to be called by blocking on the listener latch.
     taskLatch.countDown();
     assertEquals(25, task.get().intValue());
-    assertTrue(listenerLatch.await(5, TimeUnit.SECONDS));
+    assertTrue(listenerLatch.await(5, SECONDS));
     assertTrue(task.isDone());
     assertFalse(task.isCancelled());
   }
@@ -114,11 +116,10 @@ public class ListenableFutureTaskTest extends TestCase {
     runLatch.await();
     taskLatch.countDown();
 
-    ExecutionException e =
-        assertThrows(ExecutionException.class, () -> task.get(5, TimeUnit.SECONDS));
+    ExecutionException e = assertThrows(ExecutionException.class, () -> task.get(5, SECONDS));
     assertEquals(IllegalStateException.class, e.getCause().getClass());
 
-    assertTrue(listenerLatch.await(5, TimeUnit.SECONDS));
+    assertTrue(listenerLatch.await(5, SECONDS));
     assertTrue(task.isDone());
     assertFalse(task.isCancelled());
   }
@@ -130,7 +131,7 @@ public class ListenableFutureTaskTest extends TestCase {
     assertEquals(1, runLatch.getCount());
 
     // Wait for the listeners to be called, don't rely on the same-thread exec.
-    listenerLatch.await(5, TimeUnit.SECONDS);
+    listenerLatch.await(5, SECONDS);
     assertTrue(task.isDone());
     assertTrue(task.isCancelled());
 
@@ -149,7 +150,7 @@ public class ListenableFutureTaskTest extends TestCase {
     assertEquals(1, taskLatch.getCount());
 
     // Wait for the listeners to be called.
-    listenerLatch.await(5, TimeUnit.SECONDS);
+    listenerLatch.await(5, SECONDS);
     assertTrue(task.isDone());
     assertTrue(task.isCancelled());
     assertEquals(1, taskLatch.getCount());

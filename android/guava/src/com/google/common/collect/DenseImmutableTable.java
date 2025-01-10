@@ -14,6 +14,7 @@
 
 package com.google.common.collect;
 
+import static com.google.common.collect.Maps.immutableEntry;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.GwtCompatible;
@@ -23,13 +24,11 @@ import com.google.common.collect.ImmutableMap.IteratorBasedImmutableMap;
 import com.google.errorprone.annotations.Immutable;
 import com.google.j2objc.annotations.WeakOuter;
 import java.util.Map;
-import javax.annotation.CheckForNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /** A {@code RegularImmutableTable} optimized for dense data. */
 @GwtCompatible
 @Immutable(containerOf = {"R", "C", "V"})
-@ElementTypesAreNonnullByDefault
 final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> {
   private final ImmutableMap<R, Integer> rowKeyToIndex;
   private final ImmutableMap<C, Integer> columnKeyToIndex;
@@ -107,8 +106,7 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
       return keyToIndex().keySet().asList().get(index);
     }
 
-    @CheckForNull
-    abstract V getValue(int keyIndex);
+    abstract @Nullable V getValue(int keyIndex);
 
     @Override
     ImmutableSet<K> createKeySet() {
@@ -121,8 +119,7 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
     }
 
     @Override
-    @CheckForNull
-    public V get(@CheckForNull Object key) {
+    public @Nullable V get(@Nullable Object key) {
       Integer keyIndex = keyToIndex().get(key);
       return (keyIndex == null) ? null : getValue(keyIndex);
     }
@@ -134,12 +131,11 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
         private final int maxIndex = keyToIndex().size();
 
         @Override
-        @CheckForNull
-        protected Entry<K, V> computeNext() {
+        protected @Nullable Entry<K, V> computeNext() {
           for (index++; index < maxIndex; index++) {
             V value = getValue(index);
             if (value != null) {
-              return Maps.immutableEntry(getKey(index), value);
+              return immutableEntry(getKey(index), value);
             }
           }
           return endOfData();
@@ -171,8 +167,7 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
     }
 
     @Override
-    @CheckForNull
-    V getValue(int keyIndex) {
+    @Nullable V getValue(int keyIndex) {
       return values[rowIndex][keyIndex];
     }
 
@@ -205,8 +200,7 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
     }
 
     @Override
-    @CheckForNull
-    V getValue(int keyIndex) {
+    @Nullable V getValue(int keyIndex) {
       return values[keyIndex][columnIndex];
     }
 
@@ -302,8 +296,7 @@ final class DenseImmutableTable<R, C, V> extends RegularImmutableTable<R, C, V> 
   }
 
   @Override
-  @CheckForNull
-  public V get(@CheckForNull Object rowKey, @CheckForNull Object columnKey) {
+  public @Nullable V get(@Nullable Object rowKey, @Nullable Object columnKey) {
     Integer rowIndex = rowKeyToIndex.get(rowKey);
     Integer columnIndex = columnKeyToIndex.get(columnKey);
     return ((rowIndex == null) || (columnIndex == null)) ? null : values[rowIndex][columnIndex];

@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Tests for {@link ForwardingWrapperTester}. Live in a different package to detect reflection
@@ -287,7 +287,7 @@ public class ForwardingWrapperTesterTest extends TestCase {
       tester.testForwarding(interfaceType, wrapperFunction);
     } catch (AssertionFailedError expected) {
       for (String message : expectedMessages) {
-        assertThat(expected.getMessage()).contains(message);
+        assertThat(expected).hasMessageThat().contains(message);
       }
       return;
     }

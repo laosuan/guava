@@ -16,12 +16,13 @@
 
 package com.google.common.collect;
 
+import static java.lang.System.arraycopy;
+
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
 import com.google.common.annotations.J2ktIncompatible;
 import com.google.common.annotations.VisibleForTesting;
-import javax.annotation.CheckForNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of {@link ImmutableSet} with two or more elements.
@@ -30,7 +31,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @GwtCompatible(serializable = true, emulated = true)
 @SuppressWarnings("serial") // uses writeReplace(), not default serialization
-@ElementTypesAreNonnullByDefault
 final class RegularImmutableSet<E> extends ImmutableSet<E> {
   private static final Object[] EMPTY_ARRAY = new Object[0];
   static final RegularImmutableSet<Object> EMPTY =
@@ -55,7 +55,7 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
   }
 
   @Override
-  public boolean contains(@CheckForNull Object target) {
+  public boolean contains(@Nullable Object target) {
     @Nullable Object[] table = this.table;
     if (target == null || table.length == 0) {
       return false;
@@ -76,6 +76,9 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
     return size;
   }
 
+  // We're careful to put only E instances into the array in the mainline.
+  // (In the backport, we don't need this suppression, but we keep it to minimize diffs.)
+  @SuppressWarnings("unchecked")
   @Override
   public UnmodifiableIterator<E> iterator() {
     return asList().iterator();
@@ -99,7 +102,7 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
 
   @Override
   int copyIntoArray(@Nullable Object[] dst, int offset) {
-    System.arraycopy(elements, 0, dst, offset, size);
+    arraycopy(elements, 0, dst, offset, size);
     return offset + size;
   }
 

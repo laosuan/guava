@@ -26,12 +26,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Test case for {@link EventBus}.
  *
  * @author Cliff Biffle
  */
+@NullUnmarked
 public class EventBusTest extends TestCase {
   private static final String EVENT = "Hello";
   private static final String BUS_IDENTIFIER = "test-bus";
@@ -92,7 +94,7 @@ public class EventBusTest extends TestCase {
 
     // Two additional event types: Object and Comparable<?> (played by Integer)
     Object objEvent = new Object();
-    Object compEvent = new Integer(6);
+    Object compEvent = 6;
 
     bus.post(EVENT);
     bus.post(objEvent);
@@ -121,7 +123,7 @@ public class EventBusTest extends TestCase {
     final RecordingSubscriberExceptionHandler handler = new RecordingSubscriberExceptionHandler();
     final EventBus eventBus = new EventBus(handler);
     final RuntimeException exception =
-        new RuntimeException("but culottes have a tendancy to ride up!");
+        new RuntimeException("but culottes have a tendency to ride up!");
     final Object subscriber =
         new Object() {
           @Subscribe
@@ -159,11 +161,7 @@ public class EventBusTest extends TestCase {
           }
         };
     eventBus.register(subscriber);
-    try {
-      eventBus.post(EVENT);
-    } catch (RuntimeException e) {
-      fail("Exception should not be thrown.");
-    }
+    eventBus.post(EVENT);
   }
 
   public void testDeadEventForwarding() {
