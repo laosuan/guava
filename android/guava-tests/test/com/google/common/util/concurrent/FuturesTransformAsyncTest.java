@@ -17,6 +17,7 @@
 package com.google.common.util.concurrent;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
 import static com.google.common.util.concurrent.Futures.transformAsync;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 import static com.google.common.util.concurrent.Uninterruptibles.awaitUninterruptibly;
@@ -26,12 +27,14 @@ import com.google.common.util.concurrent.ForwardingListenableFuture.SimpleForwar
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Unit tests for {@link Futures#transformAsync(ListenableFuture, AsyncFunction, Executor)}.
  *
  * @author Nishant Thakkar
  */
+@NullUnmarked
 public class FuturesTransformAsyncTest extends AbstractChainedListenableFutureTest<String> {
   protected static final int SLOW_OUTPUT_VALID_INPUT_DATA = 2;
   protected static final int SLOW_FUNC_VALID_INPUT_DATA = 3;
@@ -145,7 +148,7 @@ public class FuturesTransformAsyncTest extends AbstractChainedListenableFutureTe
   }
 
   public void testFutureGetThrowsRuntimeException() throws Exception {
-    BadFuture badInput = new BadFuture(Futures.immediateFuture(20));
+    BadFuture badInput = new BadFuture(immediateFuture(20));
     ListenableFuture<String> chain = buildChainingFuture(badInput);
     ExecutionException e = assertThrows(ExecutionException.class, () -> chain.get());
     assertSame(RuntimeException.class, e.getCause().getClass());

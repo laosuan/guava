@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-import javax.annotation.CheckForNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@code CycleDetectingLockFactory} creates {@link ReentrantLock} instances and {@link
@@ -160,7 +160,6 @@ import javax.annotation.CheckForNull;
  */
 @J2ktIncompatible
 @GwtIncompatible
-@ElementTypesAreNonnullByDefault
 public class CycleDetectingLockFactory {
 
   /**
@@ -564,10 +563,14 @@ public class CycleDetectingLockFactory {
    */
   private interface CycleDetectingLock {
 
-    /** @return the {@link LockGraphNode} associated with this lock. */
+    /**
+     * @return the {@link LockGraphNode} associated with this lock.
+     */
     LockGraphNode getLockGraphNode();
 
-    /** @return {@code true} if the current thread has acquired this lock. */
+    /**
+     * @return {@code true} if the current thread has acquired this lock.
+     */
     boolean isAcquiredByCurrentThread();
   }
 
@@ -678,8 +681,7 @@ public class CycleDetectingLockFactory {
      * @return If a path was found, a chained {@link ExampleStackTrace} illustrating the path to the
      *     {@code lock}, or {@code null} if no path was found.
      */
-    @CheckForNull
-    private ExampleStackTrace findPathTo(LockGraphNode node, Set<LockGraphNode> seen) {
+    private @Nullable ExampleStackTrace findPathTo(LockGraphNode node, Set<LockGraphNode> seen) {
       if (!seen.add(this)) {
         return null; // Already traversed this node.
       }

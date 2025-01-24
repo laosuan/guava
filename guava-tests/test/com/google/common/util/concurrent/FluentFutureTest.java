@@ -27,17 +27,20 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.common.annotations.GwtCompatible;
 import com.google.common.annotations.GwtIncompatible;
+import com.google.common.annotations.J2ktIncompatible;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ForwardingListenableFuture.SimpleForwardingListenableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeoutException;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Tests for {@link FluentFuture}. The tests cover only the basics for the API. The actual logic is
  * tested in {@link FuturesTest}.
  */
+@NullMarked
 @GwtCompatible(emulated = true)
 public class FluentFutureTest extends TestCase {
   public void testFromFluentFuture() {
@@ -75,9 +78,12 @@ public class FluentFutureTest extends TestCase {
     assertThat(called[0]).isTrue();
   }
 
+  // Avoid trouble with automatic mapping between JRE and Kotlin runtime classes.
+  static class CustomRuntimeException extends RuntimeException {}
+
   public void testCatching() throws Exception {
     FluentFuture<?> f =
-        FluentFuture.from(immediateFailedFuture(new RuntimeException()))
+        FluentFuture.from(immediateFailedFuture(new CustomRuntimeException()))
             .catching(
                 Throwable.class,
                 new Function<Throwable, Class<?>>() {
@@ -87,12 +93,12 @@ public class FluentFutureTest extends TestCase {
                   }
                 },
                 directExecutor());
-    assertThat(f.get()).isEqualTo(RuntimeException.class);
+    assertThat(f.get()).isEqualTo(CustomRuntimeException.class);
   }
 
   public void testCatchingAsync() throws Exception {
     FluentFuture<?> f =
-        FluentFuture.from(immediateFailedFuture(new RuntimeException()))
+        FluentFuture.from(immediateFailedFuture(new CustomRuntimeException()))
             .catchingAsync(
                 Throwable.class,
                 new AsyncFunction<Throwable, Class<?>>() {
@@ -102,7 +108,7 @@ public class FluentFutureTest extends TestCase {
                   }
                 },
                 directExecutor());
-    assertThat(f.get()).isEqualTo(RuntimeException.class);
+    assertThat(f.get()).isEqualTo(CustomRuntimeException.class);
   }
 
   public void testTransform() throws Exception {
@@ -133,6 +139,7 @@ public class FluentFutureTest extends TestCase {
     assertThat(f.get()).isEqualTo(2);
   }
 
+  @J2ktIncompatible
   @GwtIncompatible // withTimeout
   public void testWithTimeout() throws Exception {
     ScheduledExecutorService executor = newScheduledThreadPool(1);

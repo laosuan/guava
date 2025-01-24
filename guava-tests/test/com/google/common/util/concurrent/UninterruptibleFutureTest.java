@@ -18,6 +18,7 @@ package com.google.common.util.concurrent;
 
 import static com.google.common.util.concurrent.InterruptionUtil.repeatedlyInterruptTestThread;
 import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertThrows;
@@ -30,9 +31,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 // TODO(cpovirk): Should this be merged into UninterruptiblesTest?
 /**
@@ -41,6 +42,7 @@ import junit.framework.TestCase;
  * @author Kevin Bourrillion
  * @author Chris Povirk
  */
+@NullUnmarked
 public class UninterruptibleFutureTest extends TestCase {
   private SleepingRunnable sleeper;
   private Future<Boolean> delayedFuture;
@@ -93,11 +95,11 @@ public class UninterruptibleFutureTest extends TestCase {
      * 7. We expect get() to return this result.
      * 8. We expect the test thread's interrupt state to be false.
      */
-    InterruptionUtil.requestInterruptIn(200, TimeUnit.MILLISECONDS);
+    InterruptionUtil.requestInterruptIn(200, MILLISECONDS);
 
     assertFalse(Thread.interrupted());
     try {
-      delayedFuture.get(20000, TimeUnit.MILLISECONDS);
+      delayedFuture.get(20000, MILLISECONDS);
       fail("expected to be interrupted");
     } catch (InterruptedException expected) {
     } catch (TimeoutException e) {
@@ -122,8 +124,7 @@ public class UninterruptibleFutureTest extends TestCase {
     repeatedlyInterruptTestThread(100, tearDownStack);
 
     assertThrows(
-        TimeoutException.class,
-        () -> getUninterruptibly(delayedFuture, 500, TimeUnit.MILLISECONDS));
+        TimeoutException.class, () -> getUninterruptibly(delayedFuture, 500, MILLISECONDS));
     assertTrue(Thread.interrupted()); // clears the interrupt state, too
 
     assertFalse(sleeper.completed);

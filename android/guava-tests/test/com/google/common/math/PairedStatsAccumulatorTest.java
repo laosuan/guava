@@ -49,6 +49,7 @@ import static org.junit.Assert.assertThrows;
 import com.google.common.math.StatsTesting.ManyValues;
 import java.util.Collections;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Tests for {@link PairedStatsAccumulator}. This tests the stats methods for instances built with
@@ -58,6 +59,7 @@ import junit.framework.TestCase;
  *
  * @author Pete Gillin
  */
+@NullUnmarked
 public class PairedStatsAccumulatorTest extends TestCase {
 
   private PairedStatsAccumulator emptyAccumulator;
@@ -179,10 +181,8 @@ public class PairedStatsAccumulatorTest extends TestCase {
     assertThrows(
         IllegalStateException.class,
         () -> emptyAccumulatorByAddAllEmptyPairedStats.populationCovariance());
-    assertThat(oneValueAccumulator.populationCovariance()).isWithin(0.0).of(0.0);
-    assertThat(oneValueAccumulatorByAddAllEmptyPairedStats.populationCovariance())
-        .isWithin(0.0)
-        .of(0.0);
+    assertThat(oneValueAccumulator.populationCovariance()).isEqualTo(0.0);
+    assertThat(oneValueAccumulatorByAddAllEmptyPairedStats.populationCovariance()).isEqualTo(0.0);
     assertThat(twoValuesAccumulator.populationCovariance())
         .isWithin(ALLOWED_ERROR)
         .of(TWO_VALUES_SUM_OF_PRODUCTS_OF_DELTAS / 2);

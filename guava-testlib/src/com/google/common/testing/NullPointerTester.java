@@ -48,8 +48,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A test utility that verifies that your methods and constructors throw {@link
@@ -70,7 +70,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @GwtIncompatible
 @J2ktIncompatible
-@ElementTypesAreNonnullByDefault
+@NullMarked
 public final class NullPointerTester {
 
   private final ClassToInstanceMap<Object> defaults = MutableClassToInstanceMap.create();
@@ -373,19 +373,17 @@ public final class NullPointerTester {
       if (policy.isExpectedType(cause)) {
         return;
       }
-      AssertionFailedError error =
-          new AssertionFailedError(
-              String.format(
-                  "wrong exception thrown from %s when passing null to %s parameter at index %s.%n"
-                      + "Full parameters: %s%n"
-                      + "Actual exception message: %s",
-                  invokable,
-                  invokable.getParameters().get(paramIndex).getType(),
-                  paramIndex,
-                  Arrays.toString(params),
-                  cause));
-      error.initCause(cause);
-      throw error;
+      throw new AssertionError(
+          String.format(
+              "wrong exception thrown from %s when passing null to %s parameter at index %s.%n"
+                  + "Full parameters: %s%n"
+                  + "Actual exception message: %s",
+              invokable,
+              invokable.getParameters().get(paramIndex).getType(),
+              paramIndex,
+              Arrays.toString(params),
+              cause),
+          cause);
     } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
     }

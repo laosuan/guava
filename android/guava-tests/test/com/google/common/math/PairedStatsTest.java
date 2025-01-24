@@ -57,6 +57,7 @@ import com.google.common.testing.SerializableTester;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Tests for {@link PairedStats}. This tests instances created by {@link
@@ -64,6 +65,7 @@ import junit.framework.TestCase;
  *
  * @author Pete Gillin
  */
+@NullUnmarked
 public class PairedStatsTest extends TestCase {
 
   public void testCount() {
@@ -89,7 +91,7 @@ public class PairedStatsTest extends TestCase {
 
   public void testPopulationCovariance() {
     assertThrows(IllegalStateException.class, () -> EMPTY_PAIRED_STATS.populationCovariance());
-    assertThat(ONE_VALUE_PAIRED_STATS.populationCovariance()).isWithin(0.0).of(0.0);
+    assertThat(ONE_VALUE_PAIRED_STATS.populationCovariance()).isEqualTo(0.0);
     assertThat(createSingleStats(Double.POSITIVE_INFINITY, 1.23).populationCovariance()).isNaN();
     assertThat(createSingleStats(Double.NEGATIVE_INFINITY, 1.23).populationCovariance()).isNaN();
     assertThat(createSingleStats(Double.NaN, 1.23).populationCovariance()).isNaN();

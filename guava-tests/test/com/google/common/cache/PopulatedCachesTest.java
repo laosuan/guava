@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * {@link LoadingCache} tests that deal with caches that actually contain some key-value mappings.
@@ -45,6 +46,7 @@ import junit.framework.TestCase;
  * @author mike nonemacher
  */
 
+@NullUnmarked
 public class PopulatedCachesTest extends TestCase {
   // we use integers as keys; make sure the range covers some values that ARE cached by
   // Integer.valueOf(int), and some that are not cached. (127 is the highest cached value.)
@@ -55,7 +57,7 @@ public class PopulatedCachesTest extends TestCase {
   public void testSize_populated() {
     for (LoadingCache<Object, Object> cache : caches()) {
       // don't let the entries get GCed
-      List<Entry<Object, Object>> warmed = warmUp(cache);
+      List<Entry<Object, Object>> unused = warmUp(cache);
       assertEquals(WARMUP_SIZE, cache.size());
       assertMapSize(cache.asMap(), WARMUP_SIZE);
       checkValidState(cache);
@@ -125,7 +127,7 @@ public class PopulatedCachesTest extends TestCase {
   public void testPutAll_populated() {
     for (LoadingCache<Object, Object> cache : caches()) {
       // don't let the entries get GCed
-      List<Entry<Object, Object>> warmed = warmUp(cache);
+      List<Entry<Object, Object>> unused = warmUp(cache);
       Object newKey = new Object();
       Object newValue = new Object();
       cache.asMap().putAll(ImmutableMap.of(newKey, newValue));
