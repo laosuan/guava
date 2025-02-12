@@ -18,9 +18,10 @@ package com.google.common.io;
 
 import static com.google.common.base.CharMatcher.whitespace;
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.US_ASCII;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertThrows;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.testing.NullPointerTester;
 import java.io.ByteArrayOutputStream;
@@ -32,6 +33,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestSuite;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Unit test for {@link Resources}.
@@ -39,6 +41,7 @@ import junit.framework.TestSuite;
  * @author Chris Nokleberg
  */
 
+@NullUnmarked
 public class ResourcesTest extends IoTestCase {
 
   @AndroidIncompatible // wouldn't run anyway, but strip the source entirely because of b/230620681
@@ -58,19 +61,19 @@ public class ResourcesTest extends IoTestCase {
 
   public void testToString() throws IOException {
     URL resource = getClass().getResource("testdata/i18n.txt");
-    assertEquals(I18N, Resources.toString(resource, Charsets.UTF_8));
-    assertThat(Resources.toString(resource, Charsets.US_ASCII)).isNotEqualTo(I18N);
+    assertEquals(I18N, Resources.toString(resource, UTF_8));
+    assertThat(Resources.toString(resource, US_ASCII)).isNotEqualTo(I18N);
   }
 
   public void testToByteArray() throws IOException {
     URL resource = getClass().getResource("testdata/i18n.txt");
-    assertThat(Resources.toByteArray(resource)).isEqualTo(I18N.getBytes(Charsets.UTF_8));
+    assertThat(Resources.toByteArray(resource)).isEqualTo(I18N.getBytes(UTF_8));
   }
 
   public void testReadLines() throws IOException {
     // TODO(chrisn): Check in a better resource
     URL resource = getClass().getResource("testdata/i18n.txt");
-    assertEquals(ImmutableList.of(I18N), Resources.readLines(resource, Charsets.UTF_8));
+    assertEquals(ImmutableList.of(I18N), Resources.readLines(resource, UTF_8));
   }
 
   public void testReadLines_withLineProcessor() throws IOException {
@@ -90,8 +93,7 @@ public class ResourcesTest extends IoTestCase {
             return collector;
           }
         };
-    List<String> result =
-        Resources.readLines(resource, Charsets.US_ASCII, collectAndLowercaseAndTrim);
+    List<String> result = Resources.readLines(resource, US_ASCII, collectAndLowercaseAndTrim);
     assertEquals(3600, result.size());
     assertEquals("ALICE'S ADVENTURES IN WONDERLAND", result.get(0));
     assertEquals("THE END", result.get(result.size() - 1));
@@ -152,7 +154,7 @@ public class ResourcesTest extends IoTestCase {
     try {
       Thread.currentThread().setContextClassLoader(loader);
       URL url = Resources.getResource(tempFile.getName());
-      String text = Resources.toString(url, Charsets.UTF_8);
+      String text = Resources.toString(url, UTF_8);
       assertEquals("rud a chur ar an méar fhada" + System.lineSeparator(), text);
     } finally {
       Thread.currentThread().setContextClassLoader(oldContextLoader);

@@ -19,10 +19,10 @@ import com.google.common.base.Preconditions;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import javax.annotation.CheckForNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Funnels for common types. All implementations are serializable.
@@ -31,7 +31,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @since 11.0
  */
 @Beta
-@ElementTypesAreNonnullByDefault
 public final class Funnels {
   private Funnels() {}
 
@@ -89,7 +88,7 @@ public final class Funnels {
     return new StringCharsetFunnel(charset);
   }
 
-  private static class StringCharsetFunnel implements Funnel<CharSequence>, Serializable {
+  private static class StringCharsetFunnel implements Funnel<CharSequence> {
     private final Charset charset;
 
     StringCharsetFunnel(Charset charset) {
@@ -107,7 +106,7 @@ public final class Funnels {
     }
 
     @Override
-    public boolean equals(@CheckForNull Object o) {
+    public boolean equals(@Nullable Object o) {
       if (o instanceof StringCharsetFunnel) {
         StringCharsetFunnel funnel = (StringCharsetFunnel) o;
         return this.charset.equals(funnel.charset);
@@ -139,7 +138,7 @@ public final class Funnels {
         return stringFunnel(Charset.forName(charsetCanonicalName));
       }
 
-      private static final long serialVersionUID = 0;
+      @Serial private static final long serialVersionUID = 0;
     }
   }
 
@@ -178,7 +177,7 @@ public final class Funnels {
   }
 
   private static class SequentialFunnel<E extends @Nullable Object>
-      implements Funnel<Iterable<? extends E>>, Serializable {
+      implements Funnel<Iterable<? extends E>> {
     private final Funnel<E> elementFunnel;
 
     SequentialFunnel(Funnel<E> elementFunnel) {
@@ -198,7 +197,7 @@ public final class Funnels {
     }
 
     @Override
-    public boolean equals(@CheckForNull Object o) {
+    public boolean equals(@Nullable Object o) {
       if (o instanceof SequentialFunnel) {
         SequentialFunnel<?> funnel = (SequentialFunnel<?>) o;
         return elementFunnel.equals(funnel.elementFunnel);

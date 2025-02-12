@@ -18,6 +18,10 @@ import static java.lang.Double.doubleToRawLongBits;
 import static java.lang.Double.longBitsToDouble;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -49,9 +53,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Martin Buchholz
  * @since 11.0
  */
-@ElementTypesAreNonnullByDefault
-public class AtomicDouble extends Number implements java.io.Serializable {
-  private static final long serialVersionUID = 0L;
+public class AtomicDouble extends Number {
+  @Serial private static final long serialVersionUID = 0L;
 
   // We would use AtomicLongFieldUpdater, but it has issues on some Android devices.
   private transient AtomicLong value;
@@ -227,15 +230,14 @@ public class AtomicDouble extends Number implements java.io.Serializable {
    *
    * @serialData The current value is emitted (a {@code double}).
    */
-  private void writeObject(java.io.ObjectOutputStream s) throws java.io.IOException {
+  private void writeObject(ObjectOutputStream s) throws IOException {
     s.defaultWriteObject();
 
     s.writeDouble(get());
   }
 
   /** Reconstitutes the instance from a stream (that is, deserializes it). */
-  private void readObject(java.io.ObjectInputStream s)
-      throws java.io.IOException, ClassNotFoundException {
+  private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
     s.defaultReadObject();
     value = new AtomicLong();
     set(s.readDouble());

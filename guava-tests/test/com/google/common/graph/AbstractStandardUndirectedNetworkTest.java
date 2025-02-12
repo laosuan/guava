@@ -27,6 +27,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.testing.EqualsTester;
 import java.util.Optional;
 import java.util.Set;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.After;
 import org.junit.Test;
 
@@ -34,6 +35,7 @@ import org.junit.Test;
  * Abstract base class for testing undirected {@link Network} implementations defined in this
  * package.
  */
+@NullUnmarked
 public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetworkTest {
   private static final EndpointPair<Integer> ENDPOINTS_N1N2 = EndpointPair.ordered(N1, N2);
   private static final EndpointPair<Integer> ENDPOINTS_N2N1 = EndpointPair.ordered(N2, N1);
@@ -61,8 +63,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   @Test
   public void nodes_checkReturnedSetMutability() {
     Set<Integer> nodes = network.nodes();
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> nodes.add(N2));
+    assertThrows(UnsupportedOperationException.class, () -> nodes.add(N2));
     addNode(N1);
     assertThat(network.nodes()).containsExactlyElementsIn(nodes);
   }
@@ -71,8 +72,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   @Test
   public void edges_checkReturnedSetMutability() {
     Set<String> edges = network.edges();
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> edges.add(E12));
+    assertThrows(UnsupportedOperationException.class, () -> edges.add(E12));
     addEdge(N1, N2, E12);
     assertThat(network.edges()).containsExactlyElementsIn(edges);
   }
@@ -82,8 +82,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   public void incidentEdges_checkReturnedSetMutability() {
     addNode(N1);
     Set<String> incidentEdges = network.incidentEdges(N1);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> incidentEdges.add(E12));
+    assertThrows(UnsupportedOperationException.class, () -> incidentEdges.add(E12));
     addEdge(N1, N2, E12);
     assertThat(network.incidentEdges(N1)).containsExactlyElementsIn(incidentEdges);
   }
@@ -93,8 +92,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   public void adjacentNodes_checkReturnedSetMutability() {
     addNode(N1);
     Set<Integer> adjacentNodes = network.adjacentNodes(N1);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> adjacentNodes.add(N2));
+    assertThrows(UnsupportedOperationException.class, () -> adjacentNodes.add(N2));
     addEdge(N1, N2, E12);
     assertThat(network.adjacentNodes(N1)).containsExactlyElementsIn(adjacentNodes);
   }
@@ -118,8 +116,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
     addNode(N1);
     addNode(N2);
     Set<String> edgesConnecting = network.edgesConnecting(N1, N2);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> edgesConnecting.add(E23));
+    assertThrows(UnsupportedOperationException.class, () -> edgesConnecting.add(E23));
     addEdge(N1, N2, E12);
     assertThat(network.edgesConnecting(N1, N2)).containsExactlyElementsIn(edgesConnecting);
   }
@@ -129,8 +126,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   public void inEdges_checkReturnedSetMutability() {
     addNode(N2);
     Set<String> inEdges = network.inEdges(N2);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> inEdges.add(E12));
+    assertThrows(UnsupportedOperationException.class, () -> inEdges.add(E12));
     addEdge(N1, N2, E12);
     assertThat(network.inEdges(N2)).containsExactlyElementsIn(inEdges);
   }
@@ -140,8 +136,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   public void outEdges_checkReturnedSetMutability() {
     addNode(N1);
     Set<String> outEdges = network.outEdges(N1);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> outEdges.add(E12));
+    assertThrows(UnsupportedOperationException.class, () -> outEdges.add(E12));
     addEdge(N1, N2, E12);
     assertThat(network.outEdges(N1)).containsExactlyElementsIn(outEdges);
   }
@@ -151,8 +146,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   public void predecessors_checkReturnedSetMutability() {
     addNode(N2);
     Set<Integer> predecessors = network.predecessors(N2);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> predecessors.add(N1));
+    assertThrows(UnsupportedOperationException.class, () -> predecessors.add(N1));
     addEdge(N1, N2, E12);
     assertThat(network.predecessors(N2)).containsExactlyElementsIn(predecessors);
   }
@@ -162,8 +156,7 @@ public abstract class AbstractStandardUndirectedNetworkTest extends AbstractNetw
   public void successors_checkReturnedSetMutability() {
     addNode(N1);
     Set<Integer> successors = network.successors(N1);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> successors.add(N2));
+    assertThrows(UnsupportedOperationException.class, () -> successors.add(N2));
     addEdge(N1, N2, E12);
     assertThat(network.successors(N1)).containsExactlyElementsIn(successors);
   }

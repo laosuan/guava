@@ -16,7 +16,9 @@
 
 package com.google.common.collect;
 
+import java.io.Serial;
 import java.util.Random;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Utility class for being able to seed a {@link Random} value with a passed in seed from a
@@ -26,6 +28,7 @@ import java.util.Random;
  *
  * @author Nicholaus Shupe
  */
+@NullUnmarked
 public final class SpecialRandom extends Random {
   public static SpecialRandom valueOf(String s) {
     return (s.length() == 0) ? new SpecialRandom() : new SpecialRandom(Long.parseLong(s));
@@ -50,5 +53,5 @@ public final class SpecialRandom extends Random {
     return hasSeed ? "(seed:" + seed : "(default seed)";
   }
 
-  private static final long serialVersionUID = 0;
+  @Serial private static final long serialVersionUID = 0;
 }

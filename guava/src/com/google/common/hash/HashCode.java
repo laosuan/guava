@@ -17,13 +17,14 @@ package com.google.common.hash;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.lang.Math.min;
 
 import com.google.common.base.Preconditions;
-import com.google.common.primitives.Ints;
 import com.google.common.primitives.UnsignedInts;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import java.io.Serial;
 import java.io.Serializable;
-import javax.annotation.CheckForNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An immutable hash code of arbitrary bit length.
@@ -32,7 +33,6 @@ import javax.annotation.CheckForNull;
  * @author Kurt Alfred Kluever
  * @since 11.0
  */
-@ElementTypesAreNonnullByDefault
 public abstract class HashCode {
   HashCode() {}
 
@@ -83,7 +83,7 @@ public abstract class HashCode {
    */
   @CanIgnoreReturnValue
   public int writeBytesTo(byte[] dest, int offset, int maxLength) {
-    maxLength = Ints.min(maxLength, bits() / 8);
+    maxLength = min(maxLength, bits() / 8);
     Preconditions.checkPositionIndexes(offset, offset + maxLength, dest.length);
     writeBytesToImpl(dest, offset, maxLength);
     return maxLength;
@@ -160,7 +160,7 @@ public abstract class HashCode {
       return hash == that.asInt();
     }
 
-    private static final long serialVersionUID = 0;
+    @Serial private static final long serialVersionUID = 0;
   }
 
   /**
@@ -226,7 +226,7 @@ public abstract class HashCode {
       return hash == that.asLong();
     }
 
-    private static final long serialVersionUID = 0;
+    @Serial private static final long serialVersionUID = 0;
   }
 
   /**
@@ -289,7 +289,7 @@ public abstract class HashCode {
     @Override
     public long padToLong() {
       long retVal = (bytes[0] & 0xFF);
-      for (int i = 1; i < Math.min(bytes.length, 8); i++) {
+      for (int i = 1; i < min(bytes.length, 8); i++) {
         retVal |= (bytes[i] & 0xFFL) << (i * 8);
       }
       return retVal;
@@ -320,7 +320,7 @@ public abstract class HashCode {
       return areEqual;
     }
 
-    private static final long serialVersionUID = 0;
+    @Serial private static final long serialVersionUID = 0;
   }
 
   /**
@@ -368,7 +368,7 @@ public abstract class HashCode {
    * to protect against <a href="http://en.wikipedia.org/wiki/Timing_attack">timing attacks</a>.
    */
   @Override
-  public final boolean equals(@CheckForNull Object object) {
+  public final boolean equals(@Nullable Object object) {
     if (object instanceof HashCode) {
       HashCode that = (HashCode) object;
       return bits() == that.bits() && equalsSameBits(that);

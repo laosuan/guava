@@ -25,20 +25,19 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collector;
-import javax.annotation.CheckForNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Collectors not present in {@code java.util.stream.Collectors} that are not otherwise associated
  * with a {@code com.google.common} type.
  *
  * @author Louis Wasserman
+ * @since 33.2.0 (available since 21.0 in guava-jre)
  */
 @GwtCompatible
-@ElementTypesAreNonnullByDefault
-@SuppressWarnings({"AndroidJdkLibsChecker", "Java7ApiChecker"})
+@SuppressWarnings("Java7ApiChecker")
 @IgnoreJRERequirement // Users will use this only if they're already using streams.
-final class MoreCollectors {
+public final class MoreCollectors {
 
   /*
    * TODO(lowasser): figure out if we can convert this to a concurrent AtomicReference-based
@@ -95,7 +94,7 @@ final class MoreCollectors {
   private static final class ToOptionalState {
     static final int MAX_EXTRAS = 4;
 
-    @CheckForNull Object element;
+    @Nullable Object element;
     List<Object> extras;
 
     ToOptionalState() {

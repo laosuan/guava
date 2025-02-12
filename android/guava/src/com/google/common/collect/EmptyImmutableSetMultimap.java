@@ -17,6 +17,9 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
+import com.google.common.annotations.GwtIncompatible;
+import com.google.common.annotations.J2ktIncompatible;
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -25,7 +28,6 @@ import java.util.Collection;
  * @author Mike Ward
  */
 @GwtCompatible(serializable = true)
-@ElementTypesAreNonnullByDefault
 class EmptyImmutableSetMultimap extends ImmutableSetMultimap<Object, Object> {
   static final EmptyImmutableSetMultimap INSTANCE = new EmptyImmutableSetMultimap();
 
@@ -48,5 +50,5 @@ class EmptyImmutableSetMultimap extends ImmutableSetMultimap<Object, Object> {
     return INSTANCE; // preserve singleton property
   }
 
-  private static final long serialVersionUID = 0;
+  @GwtIncompatible @J2ktIncompatible @Serial private static final long serialVersionUID = 0;
 }

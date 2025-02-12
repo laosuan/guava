@@ -24,6 +24,7 @@ import com.google.errorprone.annotations.DoNotCall;
 import com.google.errorprone.annotations.concurrent.LazyInit;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,8 +35,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collector;
-import javax.annotation.CheckForNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link SortedMultiset} whose contents will never change, with many other important properties
@@ -54,7 +54,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @since 12.0
  */
 @GwtIncompatible // hasn't been tested yet
-@ElementTypesAreNonnullByDefault
 public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
     implements SortedMultiset<E> {
   // TODO(lowasser): GWT compatibility
@@ -114,11 +113,11 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
   }
 
   /** Returns an immutable sorted multiset containing a single element. */
-  public static <E extends Comparable<? super E>> ImmutableSortedMultiset<E> of(E element) {
+  public static <E extends Comparable<? super E>> ImmutableSortedMultiset<E> of(E e1) {
     RegularImmutableSortedSet<E> elementSet =
-        (RegularImmutableSortedSet<E>) ImmutableSortedSet.of(element);
+        (RegularImmutableSortedSet<E>) ImmutableSortedSet.of(e1);
     long[] cumulativeCounts = {0, 1};
-    return new RegularImmutableSortedMultiset<E>(elementSet, cumulativeCounts, 0, 1);
+    return new RegularImmutableSortedMultiset<>(elementSet, cumulativeCounts, 0, 1);
   }
 
   /**
@@ -213,7 +212,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
     // Hack around E not being a subtype of Comparable.
     // Unsafe, see ImmutableSortedMultisetFauxverideShim.
     @SuppressWarnings("unchecked")
-    Ordering<E> naturalOrder = (Ordering<E>) Ordering.<Comparable>natural();
+    Ordering<E> naturalOrder = (Ordering<E>) Ordering.<Comparable<?>>natural();
     return copyOf(naturalOrder, elements);
   }
 
@@ -231,7 +230,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
     // Hack around E not being a subtype of Comparable.
     // Unsafe, see ImmutableSortedMultisetFauxverideShim.
     @SuppressWarnings("unchecked")
-    Ordering<E> naturalOrder = (Ordering<E>) Ordering.<Comparable>natural();
+    Ordering<E> naturalOrder = (Ordering<E>) Ordering.<Comparable<?>>natural();
     return copyOf(naturalOrder, elements);
   }
 
@@ -300,7 +299,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
     if (entries.isEmpty()) {
       return emptyMultiset(comparator);
     }
-    ImmutableList.Builder<E> elementsBuilder = new ImmutableList.Builder<E>(entries.size());
+    ImmutableList.Builder<E> elementsBuilder = new ImmutableList.Builder<>(entries.size());
     long[] cumulativeCounts = new long[entries.size() + 1];
     int i = 0;
     for (Entry<E> entry : entries) {
@@ -308,7 +307,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
       cumulativeCounts[i + 1] = cumulativeCounts[i] + entry.getCount();
       i++;
     }
-    return new RegularImmutableSortedMultiset<E>(
+    return new RegularImmutableSortedMultiset<>(
         new RegularImmutableSortedSet<E>(elementsBuilder.build(), comparator),
         cumulativeCounts,
         0,
@@ -320,7 +319,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
     if (Ordering.natural().equals(comparator)) {
       return (ImmutableSortedMultiset<E>) RegularImmutableSortedMultiset.NATURAL_EMPTY_MULTISET;
     } else {
-      return new RegularImmutableSortedMultiset<E>(comparator);
+      return new RegularImmutableSortedMultiset<>(comparator);
     }
   }
 
@@ -334,7 +333,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
   @Override
   public abstract ImmutableSortedSet<E> elementSet();
 
-  @LazyInit @CheckForNull transient ImmutableSortedMultiset<E> descendingMultiset;
+  @LazyInit transient @Nullable ImmutableSortedMultiset<E> descendingMultiset;
 
   @Override
   public ImmutableSortedMultiset<E> descendingMultiset() {
@@ -360,8 +359,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
   @Deprecated
   @Override
   @DoNotCall("Always throws UnsupportedOperationException")
-  @CheckForNull
-  public final Entry<E> pollFirstEntry() {
+  public final @Nullable Entry<E> pollFirstEntry() {
     throw new UnsupportedOperationException();
   }
 
@@ -377,8 +375,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
   @Deprecated
   @Override
   @DoNotCall("Always throws UnsupportedOperationException")
-  @CheckForNull
-  public final Entry<E> pollLastEntry() {
+  public final @Nullable Entry<E> pollLastEntry() {
     throw new UnsupportedOperationException();
   }
 
@@ -408,7 +405,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
    * @throws NullPointerException if {@code comparator} is null
    */
   public static <E> Builder<E> orderedBy(Comparator<E> comparator) {
-    return new Builder<E>(comparator);
+    return new Builder<>(comparator);
   }
 
   /**
@@ -416,11 +413,11 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
    * reverse of their natural ordering.
    *
    * <p>Note: the type parameter {@code E} extends {@code Comparable<?>} rather than {@code
-   * Comparable<? super E>} as a workaround for javac <a
-   * href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6468354">bug 6468354</a>.
+   * Comparable<? super E>} in order to accommodate users of obsolete javac versions affected by <a
+   * href="https://bugs.openjdk.org/browse/JDK-6468354">JDK-6468354</a>.
    */
   public static <E extends Comparable<?>> Builder<E> reverseOrder() {
-    return new Builder<E>(Ordering.<E>natural().reverse());
+    return new Builder<>(Ordering.<E>natural().reverse());
   }
 
   /**
@@ -430,11 +427,11 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
    * that implement {@link Comparable}.
    *
    * <p>Note: the type parameter {@code E} extends {@code Comparable<?>} rather than {@code
-   * Comparable<? super E>} as a workaround for javac <a
-   * href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6468354">bug 6468354</a>.
+   * Comparable<? super E>} in order to accommodate users of obsolete javac versions affected by <a
+   * href="https://bugs.openjdk.org/browse/JDK-6468354">JDK-6468354</a>.
    */
   public static <E extends Comparable<?>> Builder<E> naturalOrder() {
-    return new Builder<E>(Ordering.natural());
+    return new Builder<>(Ordering.natural());
   }
 
   /**
@@ -665,7 +662,7 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
    */
   @DoNotCall("Elements must be Comparable. (Or, pass a Comparator to orderedBy or copyOf.)")
   @Deprecated
-  public static <E> ImmutableSortedMultiset<E> of(E element) {
+  public static <E> ImmutableSortedMultiset<E> of(E e1) {
     throw new UnsupportedOperationException();
   }
 
@@ -763,5 +760,5 @@ public abstract class ImmutableSortedMultiset<E> extends ImmutableMultiset<E>
     throw new UnsupportedOperationException();
   }
 
-  private static final long serialVersionUID = 0xcafebabe;
+  @J2ktIncompatible @Serial private static final long serialVersionUID = 0xcafebabe;
 }

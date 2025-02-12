@@ -18,6 +18,7 @@ package com.google.common.collect.testing;
 
 import com.google.common.annotations.GwtIncompatible;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
@@ -25,7 +26,7 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A wrapper around {@code TreeSet} that aggressively checks to see if elements are mutually
@@ -92,7 +93,6 @@ public final class SafeTreeSet<E> implements Serializable, NavigableSet<E> {
     delegate.clear();
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public Comparator<? super E> comparator() {
     Comparator<? super E> comparator = delegate.comparator();
@@ -254,5 +254,5 @@ public final class SafeTreeSet<E> implements Serializable, NavigableSet<E> {
     return delegate.toString();
   }
 
-  private static final long serialVersionUID = 0L;
+  @Serial private static final long serialVersionUID = 0L;
 }

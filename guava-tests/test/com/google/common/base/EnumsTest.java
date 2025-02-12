@@ -39,6 +39,7 @@ import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Tests for {@link Enums}.
@@ -47,6 +48,7 @@ import junit.framework.TestCase;
  */
 @GwtIncompatible
 @J2ktIncompatible
+@NullUnmarked
 public class EnumsTest extends TestCase {
 
   private enum TestEnum {
@@ -54,8 +56,6 @@ public class EnumsTest extends TestCase {
     HONDA,
     POODLE,
   }
-
-  private enum OtherEnum {}
 
   public void testGetIfPresent() {
     assertThat(Enums.getIfPresent(TestEnum.class, "CHEETO")).hasValue(TestEnum.CHEETO);
@@ -223,9 +223,7 @@ public class EnumsTest extends TestCase {
           urls.add(new URL("file", null, new File(entry).getAbsolutePath()));
         }
       } catch (MalformedURLException e) {
-        AssertionError error = new AssertionError("malformed class path entry: " + entry);
-        error.initCause(e);
-        throw error;
+        throw new AssertionError("malformed class path entry: " + entry, e);
       }
     }
     return urls.build();

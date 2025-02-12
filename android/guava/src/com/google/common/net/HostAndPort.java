@@ -19,13 +19,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.GwtCompatible;
+import com.google.common.annotations.GwtIncompatible;
+import com.google.common.annotations.J2ktIncompatible;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
+import java.io.Serial;
 import java.io.Serializable;
-import javax.annotation.CheckForNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An immutable representation of a host and port.
@@ -62,7 +65,6 @@ import javax.annotation.CheckForNull;
  */
 @Immutable
 @GwtCompatible
-@ElementTypesAreNonnullByDefault
 public final class HostAndPort implements Serializable {
   /** Magic value indicating the absence of a port number. */
   private static final int NO_PORT = -1;
@@ -190,7 +192,7 @@ public final class HostAndPort implements Serializable {
     int port = NO_PORT;
     if (!Strings.isNullOrEmpty(portString)) {
       // Try to parse the whole port string as a number.
-      // JDK7 accepts leading plus signs. We don't want to.
+      // Java accepts leading plus signs. We don't want to.
       checkArgument(
           !portString.startsWith("+") && CharMatcher.ascii().matchesAllOf(portString),
           "Unparseable port number: %s",
@@ -281,7 +283,7 @@ public final class HostAndPort implements Serializable {
   }
 
   @Override
-  public boolean equals(@CheckForNull Object other) {
+  public boolean equals(@Nullable Object other) {
     if (this == other) {
       return true;
     }
@@ -318,5 +320,5 @@ public final class HostAndPort implements Serializable {
     return port >= 0 && port <= 65535;
   }
 
-  private static final long serialVersionUID = 0;
+  @GwtIncompatible @J2ktIncompatible @Serial private static final long serialVersionUID = 0;
 }

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Tests for {@link ImmutableRangeSet}.
@@ -37,8 +38,10 @@ import junit.framework.TestSuite;
  * @author Louis Wasserman
  */
 @GwtIncompatible // ImmutableRangeSet
+@NullUnmarked
 public class ImmutableRangeSetTest extends AbstractRangeSetTest {
 
+  @AndroidIncompatible // test-suite builders
   static final class ImmutableRangeSetIntegerAsSetGenerator implements TestSetGenerator<Integer> {
     @Override
     public SampleElements<Integer> samples() {
@@ -66,6 +69,7 @@ public class ImmutableRangeSetTest extends AbstractRangeSetTest {
     }
   }
 
+  @AndroidIncompatible // test-suite builders
   static final class ImmutableRangeSetBigIntegerAsSetGenerator
       implements TestSetGenerator<BigInteger> {
     @Override
@@ -99,6 +103,7 @@ public class ImmutableRangeSetTest extends AbstractRangeSetTest {
     }
   }
 
+  @AndroidIncompatible // test-suite builders
   public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTestSuite(ImmutableRangeSetTest.class);
@@ -368,7 +373,6 @@ public class ImmutableRangeSetTest extends AbstractRangeSetTest {
 
   @AndroidIncompatible // slow
   public void testExhaustive() {
-    @SuppressWarnings("unchecked")
     ImmutableSet<Range<Integer>> ranges =
         ImmutableSet.of(
             Range.<Integer>all(),
@@ -411,11 +415,7 @@ public class ImmutableRangeSetTest extends AbstractRangeSetTest {
       }
 
       if (anyOverlaps) {
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> {
-              RangeSet<Integer> copy = ImmutableRangeSet.copyOf(subset);
-            });
+        assertThrows(IllegalArgumentException.class, () -> ImmutableRangeSet.copyOf(subset));
       } else {
         RangeSet<Integer> copy = ImmutableRangeSet.copyOf(subset);
         assertEquals(mutable, copy);

@@ -17,13 +17,18 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
+import com.google.common.annotations.GwtIncompatible;
+import com.google.common.annotations.J2ktIncompatible;
+import java.io.Serial;
+import org.jspecify.annotations.NullUnmarked;
 
 /** Simple derived class to verify that we handle generics correctly. */
 @GwtCompatible
+@NullUnmarked
 class Derived extends Base {
   public Derived(String s) {
     super(s);
   }
 
-  private static final long serialVersionUID = 0;
+  @GwtIncompatible @J2ktIncompatible @Serial private static final long serialVersionUID = 0;
 }

@@ -18,8 +18,10 @@ package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
 import java.util.SortedMap;
+import org.jspecify.annotations.NullMarked;
 
 @GwtCompatible
+@NullMarked
 public class FilteredSortedMapTest extends AbstractFilteredMapTest {
   @Override
   SortedMap<String, Integer> createUnfiltered() {
@@ -38,7 +40,7 @@ public class FilteredSortedMapTest extends AbstractFilteredMapTest {
     assertEquals("cat", filtered.lastKey());
   }
 
-  public void testHeadSubTailMap_FilteredMap() {
+  public void testHeadSubTailMap_filteredMap() {
     SortedMap<String, Integer> unfiltered = createUnfiltered();
     unfiltered.put("apple", 2);
     unfiltered.put("banana", 6);

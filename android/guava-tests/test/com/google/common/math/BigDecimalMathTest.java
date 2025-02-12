@@ -28,6 +28,7 @@ import static java.math.RoundingMode.values;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.annotations.GwtIncompatible;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -35,8 +36,10 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 @GwtIncompatible
+@NullUnmarked
 public class BigDecimalMathTest extends TestCase {
   private static final class RoundToDoubleTester {
     private final BigDecimal input;
@@ -47,6 +50,7 @@ public class BigDecimalMathTest extends TestCase {
       this.input = input;
     }
 
+    @CanIgnoreReturnValue
     RoundToDoubleTester setExpectation(double expectedValue, RoundingMode... modes) {
       for (RoundingMode mode : modes) {
         Double previous = expectedValues.put(mode, expectedValue);
@@ -57,6 +61,7 @@ public class BigDecimalMathTest extends TestCase {
       return this;
     }
 
+    @CanIgnoreReturnValue
     public RoundToDoubleTester roundUnnecessaryShouldThrow() {
       unnecessaryShouldThrow = true;
       return this;
@@ -179,13 +184,15 @@ public class BigDecimalMathTest extends TestCase {
   }
 
   public void testRoundToDouble_maxDouble() {
-    BigDecimal maxDoubleAsBD = new BigDecimal(Double.MAX_VALUE);
-    new RoundToDoubleTester(maxDoubleAsBD).setExpectation(Double.MAX_VALUE, values()).test();
+    BigDecimal maxDoubleAsBigDecimal = new BigDecimal(Double.MAX_VALUE);
+    new RoundToDoubleTester(maxDoubleAsBigDecimal)
+        .setExpectation(Double.MAX_VALUE, values())
+        .test();
   }
 
   public void testRoundToDouble_maxDoublePlusOne() {
-    BigDecimal maxDoubleAsBD = new BigDecimal(Double.MAX_VALUE).add(BigDecimal.ONE);
-    new RoundToDoubleTester(maxDoubleAsBD)
+    BigDecimal maxDoubleAsBigDecimal = new BigDecimal(Double.MAX_VALUE).add(BigDecimal.ONE);
+    new RoundToDoubleTester(maxDoubleAsBigDecimal)
         .setExpectation(Double.MAX_VALUE, DOWN, FLOOR, HALF_EVEN, HALF_UP, HALF_DOWN)
         .setExpectation(Double.POSITIVE_INFINITY, UP, CEILING)
         .roundUnnecessaryShouldThrow()
@@ -245,13 +252,15 @@ public class BigDecimalMathTest extends TestCase {
   }
 
   public void testRoundToDouble_minDouble() {
-    BigDecimal minDoubleAsBD = new BigDecimal(-Double.MAX_VALUE);
-    new RoundToDoubleTester(minDoubleAsBD).setExpectation(-Double.MAX_VALUE, values()).test();
+    BigDecimal minDoubleAsBigDecimal = new BigDecimal(-Double.MAX_VALUE);
+    new RoundToDoubleTester(minDoubleAsBigDecimal)
+        .setExpectation(-Double.MAX_VALUE, values())
+        .test();
   }
 
   public void testRoundToDouble_minDoubleMinusOne() {
-    BigDecimal minDoubleAsBD = new BigDecimal(-Double.MAX_VALUE).subtract(BigDecimal.ONE);
-    new RoundToDoubleTester(minDoubleAsBD)
+    BigDecimal minDoubleAsBigDecimal = new BigDecimal(-Double.MAX_VALUE).subtract(BigDecimal.ONE);
+    new RoundToDoubleTester(minDoubleAsBigDecimal)
         .setExpectation(-Double.MAX_VALUE, DOWN, CEILING, HALF_EVEN, HALF_UP, HALF_DOWN)
         .setExpectation(Double.NEGATIVE_INFINITY, UP, FLOOR)
         .roundUnnecessaryShouldThrow()

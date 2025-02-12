@@ -19,6 +19,7 @@ package com.google.common.util.concurrent;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 import static java.lang.Thread.currentThread;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertThrows;
 
@@ -31,16 +32,17 @@ import com.google.errorprone.annotations.concurrent.GuardedBy;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Unit test for {@link AbstractService}.
  *
  * @author Jesse Wilson
  */
+@NullUnmarked
 public class AbstractServiceTest extends TestCase {
 
   private static final long LONG_TIMEOUT_MILLIS = 10000;
@@ -348,7 +350,7 @@ public class AbstractServiceTest extends TestCase {
     assertFalse(waiter.isAlive());
   }
 
-  public void testAwaitTerminated_FailedService() throws Exception {
+  public void testAwaitTerminated_failedService() throws Exception {
     final ManualSwitchedService service = new ManualSwitchedService();
     final AtomicReference<Throwable> exception = Atomics.newReference();
     Thread waiter =
@@ -649,7 +651,7 @@ public class AbstractServiceTest extends TestCase {
           }
         },
         directExecutor());
-    service.startAsync().awaitRunning(LONG_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+    service.startAsync().awaitRunning(LONG_TIMEOUT_MILLIS, MILLISECONDS);
     service.stopAsync();
   }
 

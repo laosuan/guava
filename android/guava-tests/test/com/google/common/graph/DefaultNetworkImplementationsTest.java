@@ -26,6 +26,7 @@ import com.google.common.graph.TestUtil.EdgeType;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import org.jspecify.annotations.NullUnmarked;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
 @AndroidIncompatible
 // TODO(cpovirk): Figure out Android JUnit 4 support. Does it work with Gingerbread? @RunWith?
 @RunWith(Parameterized.class)
+@NullUnmarked
 public final class DefaultNetworkImplementationsTest {
   private MutableNetwork<Integer, String> network;
   private NetworkForTest<Integer, String> networkForTest;
@@ -109,8 +111,7 @@ public final class DefaultNetworkImplementationsTest {
     network.addNode(N1);
     network.addNode(N2);
     Set<String> edgesConnecting = network.edgesConnecting(N1, N2);
-    UnsupportedOperationException e =
-        assertThrows(UnsupportedOperationException.class, () -> edgesConnecting.add(E23));
+    assertThrows(UnsupportedOperationException.class, () -> edgesConnecting.add(E23));
     network.addEdge(N1, N2, E12);
     assertThat(networkForTest.edgesConnecting(N1, N2)).containsExactlyElementsIn(edgesConnecting);
   }

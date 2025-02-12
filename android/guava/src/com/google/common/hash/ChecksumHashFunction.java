@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.errorprone.annotations.Immutable;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.zip.Checksum;
 
@@ -27,7 +28,6 @@ import java.util.zip.Checksum;
  * @author Colin Decker
  */
 @Immutable
-@ElementTypesAreNonnullByDefault
 final class ChecksumHashFunction extends AbstractHashFunction implements Serializable {
   private final ImmutableSupplier<? extends Checksum> checksumSupplier;
   private final int bits;
@@ -90,5 +90,5 @@ final class ChecksumHashFunction extends AbstractHashFunction implements Seriali
     }
   }
 
-  private static final long serialVersionUID = 0L;
+  @Serial private static final long serialVersionUID = 0L;
 }

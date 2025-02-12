@@ -28,6 +28,7 @@ import com.google.common.reflect.ClassPath.ClassInfo;
 import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Method;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Tests that all package-private {@code writeReplace} methods are overridden in any existing
@@ -36,6 +37,7 @@ import junit.framework.TestCase;
  * writeReplace} when serializing an instance of the subclass. For an example of this problem, see
  * b/310253115.
  */
+@NullUnmarked
 public class WriteReplaceOverridesTest extends TestCase {
   private static final ImmutableSet<String> GUAVA_PACKAGES =
       FluentIterable.of(
@@ -78,6 +80,14 @@ public class WriteReplaceOverridesTest extends TestCase {
            * well be a JDK bug.
            */
           || info.getName().contains("TypeTokenTest")
+          /*
+           * "IllegalAccess tried to access class
+           * com.google.common.collect.testing.AbstractIteratorTester from class
+           * com.google.common.collect.MultimapsTest"
+           *
+           * ...when we build with JDK 22 and run under JDK 8.
+           */
+          || info.getName().contains("MultimapsTest")
       /*
        * Luckily, we don't care about analyzing tests at all. We'd skip them all if we could do so
        * trivially, but it's enough to skip these ones.

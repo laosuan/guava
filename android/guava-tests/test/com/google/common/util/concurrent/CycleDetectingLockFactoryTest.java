@@ -17,6 +17,7 @@
 package com.google.common.util.concurrent;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Joiner;
@@ -24,17 +25,18 @@ import com.google.common.util.concurrent.CycleDetectingLockFactory.Policies;
 import com.google.common.util.concurrent.CycleDetectingLockFactory.Policy;
 import com.google.common.util.concurrent.CycleDetectingLockFactory.PotentialDeadlockException;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Unittests for {@link CycleDetectingLockFactory}.
  *
  * @author Darick Tong
  */
+@NullUnmarked
 public class CycleDetectingLockFactoryTest extends TestCase {
 
   private ReentrantLock lockA;
@@ -432,7 +434,7 @@ public class CycleDetectingLockFactoryTest extends TestCase {
       lock.lock();
       try {
         locked.countDown();
-        finishLatch.await(1, TimeUnit.MINUTES);
+        finishLatch.await(1, MINUTES);
       } catch (InterruptedException e) {
         fail(e.toString());
       } finally {
@@ -441,7 +443,7 @@ public class CycleDetectingLockFactoryTest extends TestCase {
     }
 
     void waitUntilHoldingLock() throws InterruptedException {
-      locked.await(1, TimeUnit.MINUTES);
+      locked.await(1, MINUTES);
     }
 
     void releaseLockAndFinish() throws InterruptedException {

@@ -17,8 +17,11 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
+import com.google.common.annotations.GwtIncompatible;
+import com.google.common.annotations.J2ktIncompatible;
+import java.io.Serial;
 import java.io.Serializable;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An immutable {@code Map.Entry}, used both by {@link
@@ -26,7 +29,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * common.collect} as a superclass.
  */
 @GwtCompatible(serializable = true)
-@ElementTypesAreNonnullByDefault
 class ImmutableEntry<K extends @Nullable Object, V extends @Nullable Object>
     extends AbstractMapEntry<K, V> implements Serializable {
   @ParametricNullness final K key;
@@ -55,5 +57,5 @@ class ImmutableEntry<K extends @Nullable Object, V extends @Nullable Object>
     throw new UnsupportedOperationException();
   }
 
-  private static final long serialVersionUID = 0;
+  @GwtIncompatible @J2ktIncompatible @Serial private static final long serialVersionUID = 0;
 }

@@ -17,11 +17,16 @@
 package com.google.common.collect;
 
 import com.google.common.annotations.GwtCompatible;
+import com.google.common.annotations.GwtIncompatible;
+import com.google.common.annotations.J2ktIncompatible;
+import java.io.Serial;
 import java.io.Serializable;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.NullUnmarked;
+import org.jspecify.annotations.Nullable;
 
 /** Simple base class to verify that we handle generics correctly. */
 @GwtCompatible
+@NullUnmarked
 class Base implements Comparable<Base>, Serializable {
   private final String s;
 
@@ -50,5 +55,5 @@ class Base implements Comparable<Base>, Serializable {
     return s.compareTo(o.s);
   }
 
-  private static final long serialVersionUID = 0;
+  @GwtIncompatible @J2ktIncompatible @Serial private static final long serialVersionUID = 0;
 }

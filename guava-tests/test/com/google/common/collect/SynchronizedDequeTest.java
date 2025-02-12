@@ -16,18 +16,21 @@
 
 package com.google.common.collect;
 
+import java.io.Serial;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import junit.framework.TestCase;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.NullUnmarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Tests for {@link Synchronized#deque} and {@link Queues#synchronizedDeque}.
  *
  * @author Kurt Alfred Kluever
  */
+@NullUnmarked
 public class SynchronizedDequeTest extends TestCase {
 
   protected Deque<String> create() {
@@ -39,7 +42,7 @@ public class SynchronizedDequeTest extends TestCase {
 
   private static final class TestDeque<E> implements Deque<E> {
     private final Deque<E> delegate = Lists.newLinkedList();
-    public final Object mutex = new Integer(1); // something Serializable
+    public final Object mutex = new Object[0]; // something Serializable
 
     @Override
     public boolean offer(E o) {
@@ -252,7 +255,7 @@ public class SynchronizedDequeTest extends TestCase {
       return delegate.descendingIterator();
     }
 
-    private static final long serialVersionUID = 0;
+    @Serial private static final long serialVersionUID = 0;
   }
 
   @SuppressWarnings("CheckReturnValue")

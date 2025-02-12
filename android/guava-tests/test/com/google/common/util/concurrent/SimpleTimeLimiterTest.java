@@ -22,12 +22,14 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import junit.framework.TestCase;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * Unit test for {@link SimpleTimeLimiter}.
@@ -35,6 +37,7 @@ import junit.framework.TestCase;
  * @author kevinb
  * @author Jens Nyman
  */
+@NullUnmarked
 public class SimpleTimeLimiterTest extends TestCase {
 
   private static final long DELAY_MS = 50;
@@ -158,7 +161,7 @@ public class SimpleTimeLimiterTest extends TestCase {
         assertThrows(
             ExecutionException.class,
             () -> service.callWithTimeout(BAD_CALLABLE, ENOUGH_MS, MILLISECONDS));
-    assertThat(expected.getCause()).isInstanceOf(SampleException.class);
+    assertThat(expected).hasCauseThat().isInstanceOf(SampleException.class);
   }
 
   public void testCallUninterruptiblyWithTimeout_goodCallableWithEnoughTime() throws Exception {
@@ -181,7 +184,7 @@ public class SimpleTimeLimiterTest extends TestCase {
         assertThrows(
             ExecutionException.class,
             () -> service.callUninterruptiblyWithTimeout(BAD_CALLABLE, ENOUGH_MS, MILLISECONDS));
-    assertThat(expected.getCause()).isInstanceOf(SampleException.class);
+    assertThat(expected).hasCauseThat().isInstanceOf(SampleException.class);
   }
 
   public void testRunWithTimeout_goodRunnableWithEnoughTime() throws Exception {
@@ -203,7 +206,7 @@ public class SimpleTimeLimiterTest extends TestCase {
         assertThrows(
             UncheckedExecutionException.class,
             () -> service.runWithTimeout(BAD_RUNNABLE, ENOUGH_MS, MILLISECONDS));
-    assertThat(expected.getCause()).isInstanceOf(SampleRuntimeException.class);
+    assertThat(expected).hasCauseThat().isInstanceOf(SampleRuntimeException.class);
   }
 
   public void testRunUninterruptiblyWithTimeout_goodRunnableWithEnoughTime() throws Exception {
@@ -225,7 +228,7 @@ public class SimpleTimeLimiterTest extends TestCase {
         assertThrows(
             UncheckedExecutionException.class,
             () -> service.runUninterruptiblyWithTimeout(BAD_RUNNABLE, ENOUGH_MS, MILLISECONDS));
-    assertThat(expected.getCause()).isInstanceOf(SampleRuntimeException.class);
+    assertThat(expected).hasCauseThat().isInstanceOf(SampleRuntimeException.class);
   }
 
   private interface Sample {
@@ -248,6 +251,7 @@ public class SimpleTimeLimiterTest extends TestCase {
       this.delayMillis = delayMillis;
     }
 
+    @CanIgnoreReturnValue
     @Override
     public String sleepThenReturnInput(String input) {
       try {
